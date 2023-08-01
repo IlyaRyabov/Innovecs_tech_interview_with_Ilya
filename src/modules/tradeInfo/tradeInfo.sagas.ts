@@ -44,6 +44,7 @@ export function* fetchTradeInfoData(): SagaIterator<void> {
     }
 }
 
+// TODO think of a reasonable solution
 export function* getFilteredAndSortedData({query}: GetFilteredAndSortedTradeData): SagaIterator<void> {
     try {
         const tradeInfoData: NormalizedModel[] = yield select(getTradeInfoData);
