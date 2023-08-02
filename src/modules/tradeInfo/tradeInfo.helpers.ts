@@ -2,6 +2,7 @@ import {isPartialStringMatch} from 'helpers/string.helpers';
 import {
     FilteredField,
     NormalizedModel,
+    TradeInfoGridData,
     TradeInfoModel,
 } from './tradeInfo.types';
 import {marketPriority} from './tradeInfo.mock';
@@ -62,7 +63,7 @@ export const getFilteredAndSortedTradeData = (
 
 export const getTradeInfoGridData = (
     data: NormalizedModel[],
-) => {
+): TradeInfoGridData => {
     const result = [];
 
     for (const {name, type, market, price: {lastTradedPrevious}, lotSize} of data) {
@@ -76,7 +77,7 @@ export const getTradeInfoGridData = (
     }
 
     return result;
-}
+};
 
 export const getPriceColor = (data: any) => {
     const lastTradedPrevious = data[3];
@@ -88,5 +89,18 @@ export const getPriceColor = (data: any) => {
         return 'green';
     } else {
         return 'gray';
+    }
+};
+
+export const getGridHeaderText = (columnIndex: number): string => {
+    switch (columnIndex) {
+        case 0:
+            return 'Item Name';
+        case 1:
+            return 'Market';
+        case 2:
+            return 'Price';
+        default:
+            return '';
     }
 };

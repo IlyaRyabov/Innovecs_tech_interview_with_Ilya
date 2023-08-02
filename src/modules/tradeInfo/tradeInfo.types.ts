@@ -3,6 +3,8 @@ export type ItemType = 'PRIVATE' | 'OFFCHAIN' | 'ONCHAIN';
 
 export type FilteredField = 'type' | 'name';
 
+export type TradeInfoGridData = (string | number)[][] | undefined;
+
 export type ModelInfo = {
     type: ItemType,
     price: {

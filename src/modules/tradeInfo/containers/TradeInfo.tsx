@@ -1,7 +1,6 @@
 import React, {ChangeEvent, useState, useEffect} from 'react';
 import {useQueryClient, useQuery} from 'react-query';
-import {Input as Search} from 'ui/Input';
-import {TradeInfoContainer} from './TradeInfoContainer';
+import {TradeInfoGrid} from './Grid';
 import {NormalizedModel, TradeInfoModel} from '../tradeInfo.types';
 import {fetchTradeInfo} from '../tradeInfo.api';
 import {
@@ -9,6 +8,7 @@ import {
     getTradeDataFromLocalStorage,
     saveTradeDataToLocalStorage
 } from '../tradeInfo.helpers';
+import {Search} from "../components/Search";
 import dataSource from '../dataSource.json';
 
 const tradeInfoData = dataSource as TradeInfoModel[];
@@ -37,20 +37,18 @@ export const TradeInfo = (): JSX.Element => {
     }, [data, tradeDataFromLocalStorage]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.toLowerCase();
+        const query = e.target.value.toLowerCase();
 
-        if (data && value.length >= 2 && !cachedSearchData?.[value]) {
-            const filteredData = getFilteredAndSortedTradeData(data, value);
+        if (data && query.length >= 2 && !cachedSearchData?.[query]) {
+            const filteredData = getFilteredAndSortedTradeData(data, query);
 
-            const updatedSearchResults = {
+            queryClient.setQueryData('searchResults', {
                 ...cachedSearchData,
-                [value]: filteredData,
-            };
-
-            queryClient.setQueryData('searchResults', updatedSearchResults);
+                [query]: filteredData,
+            });
         }
 
-        setQuery(value);
+        setQuery(query);
     };
 
     if (status === 'loading') {
@@ -59,11 +57,8 @@ export const TradeInfo = (): JSX.Element => {
 
     return (
         <>
-            <Search
-                isDisabled={false}
-                onChange={handleChange}
-            />
-            <TradeInfoContainer data={cachedSearchData?.[query] || data}/>
+            <Search onChange={handleChange}/>
+            <TradeInfoGrid data={cachedSearchData?.[query] || data}/>
         </>
     );
 }

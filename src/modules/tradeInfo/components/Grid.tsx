@@ -1,44 +1,47 @@
 import {memo} from 'react';
-import {AutoSizer, Grid as GridVirtualized} from 'react-virtualized';
 import isEqual from 'lodash/isEqual';
-import {getPriceColor} from '../tradeInfo.helpers';
+import {AutoSizer, Grid as GridVirtualized} from 'react-virtualized';
+import {getGridHeaderText, getPriceColor} from '../tradeInfo.helpers';
+import {TradeInfoGridData} from '../tradeInfo.types';
 
 type Props = {
-    data: any;
+    data: TradeInfoGridData;
 };
 
-// TODO need to be refactored
+// TODO refactoring
 const Grid = (props: Props): JSX.Element => {
     const {data} = props;
 
-    if (!data.length) {
-        return <h1>No data</h1>;
+    if (!data?.length) {
+        return (
+            <div style={{marginTop: '20px'}}>
+                <h1>No data</h1>
+            </div>
+        );
     }
 
     const columnCount = 3;
     const rowCount = data.length + 1;
 
     // @ts-ignore
-    const cellRenderer = ({ columnIndex, key, rowIndex, style }) => {
+    const cellRenderer = ({columnIndex, key, rowIndex, style}) => {
         if (rowIndex === 0) {
-            let headerText;
-            switch (columnIndex) {
-                case 0:
-                    headerText = 'Item Name';
-                    break;
-                case 1:
-                    headerText = 'Market';
-                    break;
-                case 2:
-                    headerText = 'Price';
-                    break;
-                default:
-                    headerText = '';
-                    break;
-            }
             return (
-                <div key={key} style={{...style}}>
-                    {headerText}
+                <div
+                    key={key}
+                    style={{
+                        ...style,
+                        background: 'lightgray',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderTop: '1px solid #ccc',
+                        borderBottom: '1px solid #ccc',
+                    }}
+                >
+                    {getGridHeaderText(columnIndex)}
                 </div>
             );
         }
@@ -66,7 +69,7 @@ const Grid = (props: Props): JSX.Element => {
     };
 
     return (
-        <div style={{width: '100%', height: 'calc(100vh - 40px)'}}>
+        <div style={{width: '100%', height: 'calc(100vh - 80px)'}}>
             <AutoSizer>
                 {({ width, height }) => (
                     <GridVirtualized
