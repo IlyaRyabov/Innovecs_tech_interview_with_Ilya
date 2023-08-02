@@ -26,13 +26,18 @@
 //// grey - if price the same,
 //// green - if price higher than lastTradedPrevious
 
+import {QueryClient, QueryClientProvider} from 'react-query';
 import {TradeInfo} from 'modules/tradeInfo/containers/TradeInfo';
 import './styles.css';
+
+const queryClient: QueryClient = new QueryClient();
 
 export function App() {
   return (
     <div className="App">
-        <TradeInfo/>
+        <QueryClientProvider client={queryClient}>
+            <TradeInfo/>
+        </QueryClientProvider>
     </div>
   );
 }

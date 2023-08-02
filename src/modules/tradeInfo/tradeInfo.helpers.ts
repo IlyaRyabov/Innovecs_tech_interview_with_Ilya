@@ -1,19 +1,13 @@
 import {isPartialStringMatch} from 'helpers/string.helpers';
-import {FilteredField, ItemType, Model, NormalizedModel, SearchCache} from './tradeInfo.types';
+import {
+    FilteredField,
+    NormalizedModel,
+    TradeInfoModel,
+} from './tradeInfo.types';
 import {marketPriority} from './tradeInfo.mock';
 
-export const getName = (
-    name: string,
-    type: ItemType,
-): string => `${name}_${type}`;
-
-export const getPrice = (
-    lotSize: string,
-    lastTradedPrevious: number,
-): number => lastTradedPrevious * Number(lotSize);
-
 export const normalizeTradeData = (
-    data: Model[],
+    data: TradeInfoModel[],
 ): NormalizedModel[] => data.map(({id, i, market}) => ({
     id,
     type: i.type,
@@ -66,16 +60,23 @@ export const getFilteredAndSortedTradeData = (
     return filteredData;
 };
 
-export const getTradeInfoGridData = (data: NormalizedModel[]) => data.map((item) => {
-    const {name, type, market, price: {lastTradedPrevious}, lotSize} = item;
+export const getTradeInfoGridData = (
+    data: NormalizedModel[],
+) => {
+    const result = [];
 
-    return [
-        getName(name, type),
-        market,
-        getPrice(lotSize, lastTradedPrevious),
-        lastTradedPrevious,
-    ];
-});
+    for (const {name, type, market, price: {lastTradedPrevious}, lotSize} of data) {
+
+        result.push([
+            `${name}_${type}`,
+            market,
+            lastTradedPrevious * Number(lotSize),
+            lastTradedPrevious,
+        ]);
+    }
+
+    return result;
+}
 
 export const getPriceColor = (data: any) => {
     const lastTradedPrevious = data[3];
@@ -88,11 +89,4 @@ export const getPriceColor = (data: any) => {
     } else {
         return 'gray';
     }
-};
-
-export const isTradeInfoDataCachedByQuery = (
-    searchCache: SearchCache,
-    query: string,
-): boolean => {
-    return Object.keys(searchCache || {}).some((str) => isPartialStringMatch(query, str));
 };

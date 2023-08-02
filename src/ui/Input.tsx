@@ -5,7 +5,7 @@ type Props = {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export const Search = (props: Props) => {
+export const Input = (props: Props) => {
     const {isDisabled, onChange} = props;
 
     return (
