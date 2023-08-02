@@ -18,7 +18,7 @@ export function TradeInfoGrid(props: Props) {
 
     return (
         <TradeInfoGridComponent
-            data={tradeInfoGridData || []}
+            data={tradeInfoGridData}
         />
     );
 }

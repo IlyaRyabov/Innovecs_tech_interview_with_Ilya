@@ -1,23 +1,19 @@
-import {memo} from 'react';
-import isEqual from 'lodash/isEqual';
+import React from 'react';
 import {AutoSizer, Grid as GridVirtualized} from 'react-virtualized';
-import {getGridHeaderText, getPriceColor} from '../tradeInfo.helpers';
+import {isEqual} from 'lodash';
+import {GridCell} from './GridCell';
+import {GridHeader} from './GridHeader';
 import {TradeInfoGridData} from '../tradeInfo.types';
 
 type Props = {
-    data: TradeInfoGridData;
+    data: TradeInfoGridData,
 };
 
-// TODO refactoring
 const Grid = (props: Props): JSX.Element => {
     const {data} = props;
 
     if (!data?.length) {
-        return (
-            <div style={{marginTop: '20px'}}>
-                <h1>No data</h1>
-            </div>
-        );
+        return <h1 style={{marginTop: '20px'}}>No data</h1>;
     }
 
     const columnCount = 3;
@@ -27,49 +23,28 @@ const Grid = (props: Props): JSX.Element => {
     const cellRenderer = ({columnIndex, key, rowIndex, style}) => {
         if (rowIndex === 0) {
             return (
-                <div
+                <GridHeader
+                    columnIndex={columnIndex}
                     key={key}
-                    style={{
-                        ...style,
-                        background: 'lightgray',
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderTop: '1px solid #ccc',
-                        borderBottom: '1px solid #ccc',
-                    }}
-                >
-                    {getGridHeaderText(columnIndex)}
-                </div>
+                    style={style}
+                />
+            );
+        } else {
+            return (
+                <GridCell
+                    key={key}
+                    columnIndex={columnIndex}
+                    columnCount={columnCount}
+                    rowIndex={rowIndex}
+                    style={style}
+                    data={data}
+                />
             );
         }
-
-        const cellData = data[rowIndex - 1][columnIndex];
-
-        const cellStyle = {
-            ...style,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderBottom: '1px solid #ccc',
-        };
-
-        const lastColumnStyle = {
-            ...cellStyle,
-            color: getPriceColor(data[rowIndex - 1]),
-        };
-
-        return (
-            <div key={key} style={columnIndex === columnCount - 1 ? lastColumnStyle : cellStyle}>
-                {cellData}
-            </div>
-        );
     };
 
     return (
-        <div style={{width: '100%', height: 'calc(100vh - 80px)'}}>
+        <div style={{ width: '100%', height: 'calc(100vh - 80px)' }}>
             <AutoSizer>
                 {({ width, height }) => (
                     <GridVirtualized
@@ -80,6 +55,7 @@ const Grid = (props: Props): JSX.Element => {
                         columnWidth={width / columnCount}
                         rowHeight={40}
                         cellRenderer={cellRenderer}
+                        data={data}
                     />
                 )}
             </AutoSizer>
@@ -87,6 +63,6 @@ const Grid = (props: Props): JSX.Element => {
     );
 };
 
-export const TradeInfoGrid = memo(Grid, (prevProps, nextProps) => {
+export const TradeInfoGrid = React.memo(Grid, (prevProps, nextProps) => {
     return isEqual(prevProps.data, nextProps.data);
 });
